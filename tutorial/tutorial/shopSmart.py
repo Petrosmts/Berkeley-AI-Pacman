@@ -29,7 +29,7 @@ def shopSmart(orderList, fruitShops):
         orderList: List of (fruit, numPound) tuples
         fruitShops: List of FruitShops
     """
-    min_price = fruitShops[0]
+    min_price = fruitShops[0].getPriceOfOrder(orderList)
     best = fruitShops[0]
     for i in fruitShops:
         if i.getPriceOfOrder(orderList) < min_price:
