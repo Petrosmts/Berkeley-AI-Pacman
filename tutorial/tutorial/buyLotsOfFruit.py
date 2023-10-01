@@ -35,9 +35,9 @@ def buyLotsOfFruit(orderList):
     Returns cost of order
     """
     totalCost = 0.0
-    for i in orderList:
-        if i[0] in fruitPrices:
-            totalCost += i[1] * fruitPrices[i[0]]
+    for fruit, amount in orderList:
+        if fruit in fruitPrices:
+            totalCost += amount * fruitPrices[fruit]
         else: 
             print("Error, a kind doesn't exist")
             return None
