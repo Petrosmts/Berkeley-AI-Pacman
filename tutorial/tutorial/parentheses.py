@@ -20,6 +20,9 @@ class Stack:
 def main():
     stack1 = Stack()  #we create a stack named stack1
     a = input('Give a string:')
+    if a[0] == ')' or a[0] == ']' or a[0] == '}': #if the first element is a closing one, there is no reason to search for something.
+        print("Characters are not well balanced")
+        return None
     for i in range(len(a)):  #access to all elements of the string one by one
         if a[i] == '(' or a[i] == '[' or a[i] == '{':  #if element is '(', '[' or '{' then we push it in the stack
             stack1.push(a[i])
