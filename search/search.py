@@ -81,17 +81,52 @@ def depthFirstSearch(problem: SearchProblem):
 
     To get started, you might want to try some of these simple commands to
     understand the search problem that is being passed in:
-
+    
     print("Start:", problem.getStartState())
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
+    
+    stack = util.Stack()
+    visited = []
+    path = []
+    stack.push((problem.getStartState(), []))
+    while stack.isEmpty() == False:
+        cur_state,cur_action = stack.pop()
+        if cur_state not in visited:
+            visited.append(cur_state)
+            if problem.isGoalState(cur_state) == False:
+                for state,action,cost in problem.getSuccessors(cur_state):
+                    state_path = cur_action + [action]
+                    stack.push((state, state_path))       
+            else:
+                path = cur_action
+                break
+    return path        
     util.raiseNotDefined()
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
+    
+    queue = util.Queue()
+    visited = []
+    path = []
+    queue.push((problem.getStartState(), []))
+    while queue.isEmpty() == False:
+        cur_state,cur_action = queue.pop()
+        if cur_state not in visited:
+            visited.append(cur_state)
+            if problem.isGoalState(cur_state) == False:
+                for state,action,cost in problem.getSuccessors(cur_state):
+                    state_path = cur_action + [action]
+                    queue.push((state, state_path))       
+            else:
+                path = cur_action
+                break
+    return path
+    
     util.raiseNotDefined()
 
 def uniformCostSearch(problem: SearchProblem):
