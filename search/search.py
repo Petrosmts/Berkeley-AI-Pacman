@@ -89,15 +89,16 @@ def depthFirstSearch(problem: SearchProblem):
     "*** YOUR CODE HERE ***"
     
     stack = util.Stack()
-    visited = []
-    path = []
+    checked = list()
+    path = list()
     stack.push((problem.getStartState(), []))
     while stack.isEmpty() == False:
         cur_state,cur_action = stack.pop()
-        if cur_state not in visited:
-            visited.append(cur_state)
+        if cur_state not in checked:
+            checked.append(cur_state)
             if problem.isGoalState(cur_state) == False:
-                for state,action,cost in problem.getSuccessors(cur_state):
+                all_successors = problem.getSuccessors(cur_state)
+                for state,action,cost in all_successors:
                     state_path = cur_action + [action]
                     stack.push((state, state_path))       
             else:
@@ -111,15 +112,16 @@ def breadthFirstSearch(problem: SearchProblem):
     "*** YOUR CODE HERE ***"
     
     queue = util.Queue()
-    visited = []
-    path = []
+    checked = list()
+    path = list()
     queue.push((problem.getStartState(), []))
     while queue.isEmpty() == False:
         cur_state,cur_action = queue.pop()
-        if cur_state not in visited:
-            visited.append(cur_state)
+        if cur_state not in checked:
+            checked.append(cur_state)
             if problem.isGoalState(cur_state) == False:
-                for state,action,cost in problem.getSuccessors(cur_state):
+                all_successors = problem.getSuccessors(cur_state)
+                for state,action,cost in all_successors:
                     state_path = cur_action + [action]
                     queue.push((state, state_path))       
             else:
