@@ -152,7 +152,6 @@ def uniformCostSearch(problem: SearchProblem):
                 path = cur_action
                 break
     return path
-
     util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
