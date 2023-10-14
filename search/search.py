@@ -104,7 +104,7 @@ def depthFirstSearch(problem: SearchProblem):
             else:
                 path = cur_action
                 break
-    return path        
+    return path     
     util.raiseNotDefined()
 
 def breadthFirstSearch(problem: SearchProblem):
@@ -128,7 +128,6 @@ def breadthFirstSearch(problem: SearchProblem):
                 path = cur_action
                 break
     return path
-    
     util.raiseNotDefined()
 
 def uniformCostSearch(problem: SearchProblem):
