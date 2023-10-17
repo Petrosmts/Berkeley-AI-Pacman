@@ -289,28 +289,34 @@ class CornersProblem(search.SearchProblem):
             if not startingGameState.hasFood(*corner):
                 print('Warning: no food in corner ' + str(corner))
         self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
+
     def getStartState(self):
         """
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
         "*** YOUR CODE HERE ***"
-        checked_list = [False for i in self.corners]
-        return (self.startingPosition, checked_list) # returns the coordinates of pacman and a list that includes the checked corners(corners that are already in the path)
-        util.raiseNotDefined()
+        """ A state space can be the start coordinates and a list to hold visited corners"""
+        corners_list = list()
+        return (self.startingPosition, corners_list)
+        #util.raiseNotDefined()
 
-    def isGoalState(self, state: Any):
+    def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        
-        if False in state[1]:
-            return False
-        return True
-        util.raiseNotDefined()
+        """ Check to see if a state is a corner, and if so are the other corners visited"""
+        #xy = state[0]
+        #visitedCorners = state[1]
+        #if xy in self.corners:
+            #if not xy in visitedCorners:
+                #visitedCorners.append(xy)
+        return len(state[1]) == 4
 
-    def getSuccessors(self, state: Any):
+        #util.raiseNotDefined()
+
+    def getSuccessors(self, state):
         """
         Returns successor states, the actions they require, and a cost of 1.
 
@@ -320,9 +326,9 @@ class CornersProblem(search.SearchProblem):
             state, 'action' is the action required to get there, and 'stepCost'
             is the incremental cost of expanding to that successor
         """
-
         successors = []
         x,y = state[0]
+        suc_cost = 1
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
@@ -339,12 +345,11 @@ class CornersProblem(search.SearchProblem):
             if hitsWall == False:
                 succ_coor = (nextx, nexty)
                 corners_list = list(state[1])
-                for index, corner in enumerate(self.corners):
-                    if succ_coor == corner:
-                        corners_list[index] = True
-                state = (succ_coor, corners_list)
-                successor = (state, action, 1)
-                successors.append(successor)
+                if succ_coor in self.corners and succ_coor and succ_coor not in corners_list:
+                        corners_list.append(succ_coor)
+                succ_state = (succ_coor, corners_list)
+                successor = (succ_state, action, suc_cost)
+                successors.append(successor)         
         self._expanded += 1 # DO NOT CHANGE
         return successors
 
@@ -379,6 +384,8 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
+
+
     return 0 # Default to trivial solution
 
 class AStarCornersAgent(SearchAgent):
@@ -504,6 +511,7 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
+
         util.raiseNotDefined()
 
 class AnyFoodSearchProblem(PositionSearchProblem):
@@ -540,6 +548,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x,y = state
 
         "*** YOUR CODE HERE ***"
+
         util.raiseNotDefined()
 
 def mazeDistance(point1: Tuple[int, int], point2: Tuple[int, int], gameState: pacman.GameState) -> int:

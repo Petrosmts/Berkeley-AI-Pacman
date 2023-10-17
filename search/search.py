@@ -92,17 +92,17 @@ def depthFirstSearch(problem: SearchProblem):
     checked = list()
     path = list()
     stack.push((problem.getStartState(), []))
-    while not stack.isEmpty():
-        now_state,now_action = stack.pop()
-        if now_state not in checked:
-            checked.append(now_state)
-            if not problem.isGoalState(now_state):
-                all_successors = problem.getSuccessors(now_state)
+    while stack.isEmpty() == False:
+        cur_state,cur_action = stack.pop()
+        if cur_state not in checked:
+            checked.append(cur_state)
+            if problem.isGoalState(cur_state) == False:
+                all_successors = problem.getSuccessors(cur_state)
                 for state,action,cost in all_successors:
-                    path_of_state = now_action + [action]
-                    stack.push((state, path_of_state))       
+                    state_path = cur_action + [action]
+                    stack.push((state, state_path))       
             else:
-                path = now_action
+                path = cur_action
                 break
     return path     
     util.raiseNotDefined()
@@ -138,18 +138,18 @@ def uniformCostSearch(problem: SearchProblem):
     checked = list()
     path = list()
     pqueue.push((problem.getStartState(), []), 0)
-    while not pqueue.isEmpty():
-        now_state,now_action = pqueue.pop()
-        if now_state not in checked:
-            checked.append(now_state)
-            if not problem.isGoalState(now_state):
-                all_successors = problem.getSuccessors(now_state)
+    while pqueue.isEmpty() == False:
+        cur_state,cur_action = pqueue.pop()
+        if cur_state not in checked:
+            checked.append(cur_state)
+            if problem.isGoalState(cur_state) == False:
+                all_successors = problem.getSuccessors(cur_state)
                 for state,action,cost in all_successors:
-                    path_of_state = now_action + [action]
-                    tcost = problem.getCostOfActions(path_of_state)
-                    pqueue.push((state,path_of_state) ,tcost)       
+                    state_path = cur_action + [action]
+                    tcost = problem.getCostOfActions(state_path)
+                    pqueue.push((state,state_path) ,tcost)       
             else:
-                path = now_action
+                path = cur_action
                 break
     return path
     util.raiseNotDefined()
@@ -168,18 +168,18 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     checked = list()
     path = list()
     pqueue.push((problem.getStartState(), []), 0)
-    while not pqueue.isEmpty():
-        now_state,now_action = pqueue.pop()
-        if now_state not in checked:
-            checked.append(now_state)
-            if not problem.isGoalState(now_state):
-                all_successors = problem.getSuccessors(now_state)
+    while pqueue.isEmpty() == False:
+        cur_state,cur_action = pqueue.pop()
+        if cur_state not in checked:
+            checked.append(cur_state)
+            if problem.isGoalState(cur_state) == False:
+                all_successors = problem.getSuccessors(cur_state)
                 for state,action,cost in all_successors:
-                    path_of_state = now_action + [action]
-                    tcost = problem.getCostOfActions(path_of_state) + heuristic(state, problem)
-                    pqueue.push((state,path_of_state), tcost)       
+                    state_path = cur_action + [action]
+                    tcost = problem.getCostOfActions(state_path) + heuristic(state, problem)
+                    pqueue.push((state,state_path), tcost)       
             else:
-                path = now_action
+                path = cur_action
                 break
     return path
     util.raiseNotDefined()
