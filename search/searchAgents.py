@@ -289,13 +289,14 @@ class CornersProblem(search.SearchProblem):
             if not startingGameState.hasFood(*corner):
                 print('Warning: no food in corner ' + str(corner))
         self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
-
     def getStartState(self):
         """
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
         "*** YOUR CODE HERE ***"
+        checked_list = [False for i in self.corners]
+        return (self.startingPosition, tuple(checked_list)) # returns the coordinates of pacman and a list that includes the checked corners(corners that are already in the path)
         util.raiseNotDefined()
 
     def isGoalState(self, state: Any):
@@ -303,6 +304,10 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
+        
+        if False in state[1]:
+            return False
+        return True
         util.raiseNotDefined()
 
     def getSuccessors(self, state: Any):
@@ -317,6 +322,7 @@ class CornersProblem(search.SearchProblem):
         """
 
         successors = []
+        x,y = state[0]
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
@@ -327,6 +333,18 @@ class CornersProblem(search.SearchProblem):
 
             "*** YOUR CODE HERE ***"
 
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            hitsWall = self.walls[nextx][nexty]
+            if hitsWall == False:
+                succ_coor = (nextx, nexty)
+                corners_list = list(state[1])
+                for index, corner in enumerate(self.corners):
+                    if succ_coor == corner:
+                        corners_list[index] = True
+                state = (succ_coor, tuple(corners_list))
+                successor = (state, action, 1)
+                successors.append(successor)
         self._expanded += 1 # DO NOT CHANGE
         return successors
 
