@@ -296,7 +296,7 @@ class CornersProblem(search.SearchProblem):
         """
         "*** YOUR CODE HERE ***"
         checked_list = [False for i in self.corners]
-        return (self.startingPosition, tuple(checked_list)) # returns the coordinates of pacman and a list that includes the checked corners(corners that are already in the path)
+        return (self.startingPosition, checked_list) # returns the coordinates of pacman and a list that includes the checked corners(corners that are already in the path)
         util.raiseNotDefined()
 
     def isGoalState(self, state: Any):
@@ -342,7 +342,7 @@ class CornersProblem(search.SearchProblem):
                 for index, corner in enumerate(self.corners):
                     if succ_coor == corner:
                         corners_list[index] = True
-                state = (succ_coor, tuple(corners_list))
+                state = (succ_coor, corners_list)
                 successor = (state, action, 1)
                 successors.append(successor)
         self._expanded += 1 # DO NOT CHANGE
