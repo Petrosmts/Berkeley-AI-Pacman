@@ -307,12 +307,10 @@ class CornersProblem(search.SearchProblem):
         """
         "*** YOUR CODE HERE ***"
         """ Check to see if a state is a corner, and if so are the other corners visited"""
-        #xy = state[0]
-        #visitedCorners = state[1]
-        #if xy in self.corners:
-            #if not xy in visitedCorners:
-                #visitedCorners.append(xy)
-        return len(state[1]) == 4
+
+        if len(state[1]) == 4:
+            return True
+        return False
 
         #util.raiseNotDefined()
 
@@ -385,8 +383,21 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
 
     "*** YOUR CODE HERE ***"
 
+    coor = state[0]
+    non_checked = list()
+    max_dist = -1
+    for i in corners:
+        if i not in state[1]:
+            non_checked.append(i)
+    if len(non_checked) == 0:
+        return 0
+    for k in non_checked:
+        dist = util.manhattanDistance(coor, k)
+        if dist > max_dist:
+            max_dist = dist
+    return max_dist
 
-    return 0 # Default to trivial solution
+    #return 0 # Default to trivial solution
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
