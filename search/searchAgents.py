@@ -342,7 +342,7 @@ class CornersProblem(search.SearchProblem):
             hitsWall = self.walls[nextx][nexty]
             if hitsWall == False:
                 succ_coor = (nextx, nexty)
-                corners_list = list(state[1])
+                corners_list = state[1]
                 if succ_coor in self.corners and succ_coor and succ_coor not in corners_list:
                         corners_list.append(succ_coor)
                 succ_state = (succ_coor, corners_list)
