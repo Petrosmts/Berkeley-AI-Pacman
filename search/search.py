@@ -88,29 +88,29 @@ def depthFirstSearch(problem: SearchProblem):
     """
     "*** YOUR CODE HERE ***"
     
-    stack = util.Stack()
-    checked = list()
-    path = list()
-    stack.push((problem.getStartState(), []))
+    stack = util.Stack()  #fringe
+    checked = list()  #visited states will be inserted here
+    path = list()  #the path we will return 
+    stack.push((problem.getStartState(), []))  #we push in the fringe the state and a list with the path to reach this state, both in a tuple.
     while stack.isEmpty() == False:
         cur_state,cur_action = stack.pop()
-        if cur_state not in checked:
+        if cur_state not in checked:  #if state is not visited, then we add it in the visited states
             checked.append(cur_state)
-            if problem.isGoalState(cur_state) == False:
+            if problem.isGoalState(cur_state) == False:  #if state is not goal state, then get its successor states. 
                 all_successors = problem.getSuccessors(cur_state)
                 for state,action,cost in all_successors:
-                    state_path = cur_action + [action]
+                #for every successor state, make the path for it (parent's_path + action) and push the tuple (state,path) in the fringe so we can check it later.
+                    state_path = cur_action + [action]  
                     stack.push((state, state_path))       
-            else:
+            else:  #if state is goal state then return this state's path.
                 path = cur_action
-                break
-    return path     
+                return path
     util.raiseNotDefined()
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    
+    #same code but fringe is queue instead of stack.
     queue = util.Queue()
     checked = list()
     path = list()
@@ -126,17 +126,17 @@ def breadthFirstSearch(problem: SearchProblem):
                     queue.push((state, path_of_state))       
             else:
                 path = now_action
-                break
-    return path
+                return path
     util.raiseNotDefined()
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-
-    pqueue = util.PriorityQueue()
+    #same code but with 3 differences
+    pqueue = util.PriorityQueue()  #Firstly, fringe is priority queue
     checked = list()
     path = list()
+    #secondly, in the pqueue, we insert the tuple (state,path) and also it's priority(total cost of path)
     pqueue.push((problem.getStartState(), []), 0)
     while pqueue.isEmpty() == False:
         cur_state,cur_action = pqueue.pop()
@@ -146,12 +146,12 @@ def uniformCostSearch(problem: SearchProblem):
                 all_successors = problem.getSuccessors(cur_state)
                 for state,action,cost in all_successors:
                     state_path = cur_action + [action]
-                    tcost = problem.getCostOfActions(state_path)
+                    #Thirdly, total cost of a path is computed by the function getCostOfActions
+                    tcost = problem.getCostOfActions(state_path) 
                     pqueue.push((state,state_path) ,tcost)       
             else:
                 path = cur_action
-                break
-    return path
+                return path
     util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
@@ -164,6 +164,7 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
+    #same code with uniformCostSearch but the cost of a path is equal to the sum of getCostOfActions and the heuristic function for a state.
     pqueue = util.PriorityQueue()
     checked = list()
     path = list()
@@ -180,8 +181,7 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
                     pqueue.push((state,state_path), tcost)       
             else:
                 path = cur_action
-                break
-    return path
+                return path
     util.raiseNotDefined()
 
 
