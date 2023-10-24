@@ -297,7 +297,7 @@ class CornersProblem(search.SearchProblem):
         """
         "*** YOUR CODE HERE ***"
         """ A state space can be the start coordinates and a list to hold visited corners"""
-        check_list = [False for i in self.corners] 
+        check_list = [False, False, False, False] 
         state = (self.startingPosition, check_list)
         return state
         #util.raiseNotDefined()
