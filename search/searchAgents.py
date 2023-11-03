@@ -297,8 +297,8 @@ class CornersProblem(search.SearchProblem):
         """
         "*** YOUR CODE HERE ***"
         """ A state space can be the start coordinates and a list to hold visited corners"""
-        check_list = [False, False, False, False] 
-        state = (self.startingPosition, check_list)
+        check_list = [False, False, False, False]  #list with a position for every corner. True if it's visited, False if not.
+        state = (self.startingPosition, check_list)  #state is a tuple with the coordinates of pacman and the list for the corners.
         return state
         #util.raiseNotDefined()
 
@@ -309,10 +309,10 @@ class CornersProblem(search.SearchProblem):
         "*** YOUR CODE HERE ***"
         """ Check to see if a state is a corner, and if so are the other corners visited"""
 
-        for i in state[1]:
-            if i == False:
+        for i in state[1]: 
+            if i == False:  #for every corner, if there is one corner unvisited, then it's not a goal state. If all corners are visited, then it is a goal state. 
                 return False
-        return True
+        return True  #If all corners are visited, then it is a goal state.
 
         #util.raiseNotDefined()
 
@@ -328,7 +328,7 @@ class CornersProblem(search.SearchProblem):
         """
         successors = []
         x, y = state[0]
-        suc_cost = 1
+        suc_cost = 1  #every successor has a cost of 1. 
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
@@ -345,10 +345,9 @@ class CornersProblem(search.SearchProblem):
             if hitsWall == False:
                 succ_coor = (nextx, nexty)
                 corners_list = list(state[1])
-                if succ_coor in self.corners:
-                    for index,corner in enumerate(self.corners):
-                        if succ_coor == corner:
-                            corners_list[index] = True
+                for index,corner in enumerate(self.corners):
+                    if succ_coor == corner:  #if the successor is a corner then mark this corner as True(visited).
+                        corners_list[index] = True  
                 succ_state = (succ_coor, corners_list)
                 successor = (succ_state, action, suc_cost)
                 successors.append(successor)
@@ -389,18 +388,18 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     "*** YOUR CODE HERE ***"
 
     coor = state[0]
-    non_checked = list()
+    non_checked = list()  #non-visited corners
     max_dist = -10
     corners_list = state[1]
     for index,corner in enumerate(corners):
-        if corners_list[index] == False:
+        if corners_list[index] == False:  #if a corner is not visited then add it to the non-checked list.
             non_checked.append(corner)
-    if len(non_checked) == 0:
+    if len(non_checked) == 0:  #if all corners are visited, we are on a goal state, so zero is returned.
         return 0
     for i in non_checked:
-        distance = util.manhattanDistance(coor, i)
+        distance = util.manhattanDistance(coor, i)  #for every unvisited corner, we find the distance between the state and this corner with manhattanDistance function.
         if distance > max_dist:
-            max_dist = distance
+            max_dist = distance  #we return the maximum distance to an unchecked corner because we want a lower bound on the shortest path from the state to a goal.
     return max_dist
 
     #return 0 # Default to trivial solution
@@ -497,14 +496,14 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    if problem.isGoalState(state) == True:
+    if problem.isGoalState(state) == True:  #if it's a goal state, then all food has been eaten so zero is returned.
         return 0
     max_dist = -10
     food_list = foodGrid.asList()
-    for food in food_list:
+    for food in food_list:  #for every food, we find the distance from the state to this food with mazeDistance function.
         distance = mazeDistance(position, food, problem.startingGameState)
         if distance > max_dist:
-            max_dist = distance
+            max_dist = distance  #we want a lower bound to the shortest path from the state to a food.
     return max_dist
 
 class ClosestDotSearchAgent(SearchAgent):
@@ -536,7 +535,7 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
-        closest_path = search.breadthFirstSearch(problem)
+        closest_path = search.breadthFirstSearch(problem)  #every search function which uses BFS finds the path we want.
         return closest_path
         util.raiseNotDefined()
 
@@ -575,7 +574,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
 
         "*** YOUR CODE HERE ***"
 
-        return self.food[x][y] 
+        return self.food[x][y]  #True if there is a food in (x,y) position, False if not.
         util.raiseNotDefined()
 
 def mazeDistance(point1: Tuple[int, int], point2: Tuple[int, int], gameState: pacman.GameState) -> int:
