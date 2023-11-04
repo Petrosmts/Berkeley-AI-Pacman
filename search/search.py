@@ -115,7 +115,7 @@ def breadthFirstSearch(problem: SearchProblem):
     checked = list()
     path = list()
     queue.push((problem.getStartState(), []))
-    while not queue.isEmpty():
+    while queue.isEmpty() == False:
         now_state,now_action = queue.pop()
         if now_state not in checked:
             checked.append(now_state)
