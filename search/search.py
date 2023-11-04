@@ -89,13 +89,13 @@ def depthFirstSearch(problem: SearchProblem):
     "*** YOUR CODE HERE ***"
     
     stack = util.Stack()  #fringe
-    checked = list()  #visited states will be inserted here
+    checked = set()  #visited states will be inserted here
     path = list()  #the path we will return 
     stack.push((problem.getStartState(), []))  #we push in the fringe the state and a list with the path to reach this state, both in a tuple.
     while stack.isEmpty() == False:
         cur_state,cur_action = stack.pop()
         if cur_state not in checked:  #if state is not visited, then we add it in the visited states
-            checked.append(cur_state)
+            checked.add(cur_state)
             if problem.isGoalState(cur_state) == False:  #if state is not goal state, then get its successor states. 
                 all_successors = problem.getSuccessors(cur_state)
                 for state,action,cost in all_successors:
@@ -112,13 +112,13 @@ def breadthFirstSearch(problem: SearchProblem):
     "*** YOUR CODE HERE ***"
     #same code but fringe is queue instead of stack.
     queue = util.Queue()
-    checked = list()
+    checked = set()
     path = list()
     queue.push((problem.getStartState(), []))
     while queue.isEmpty() == False:
         now_state,now_action = queue.pop()
         if now_state not in checked:
-            checked.append(now_state)
+            checked.add(now_state)
             if not problem.isGoalState(now_state):
                 all_successors = problem.getSuccessors(now_state)
                 for state,action,cost in all_successors:
@@ -134,14 +134,14 @@ def uniformCostSearch(problem: SearchProblem):
     "*** YOUR CODE HERE ***"
     #same code but with 3 differences
     pqueue = util.PriorityQueue()  #Firstly, fringe is priority queue
-    checked = list()
+    checked = set()
     path = list()
     #secondly, in the pqueue, we insert the tuple (state,path) and also it's priority(total cost of path)
     pqueue.push((problem.getStartState(), []), 0)
     while pqueue.isEmpty() == False:
         cur_state,cur_action = pqueue.pop()
         if cur_state not in checked:
-            checked.append(cur_state)
+            checked.add(cur_state)
             if problem.isGoalState(cur_state) == False:
                 all_successors = problem.getSuccessors(cur_state)
                 for state,action,cost in all_successors:
@@ -166,13 +166,13 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     "*** YOUR CODE HERE ***"
     #same code with uniformCostSearch but the cost of a path is equal to the sum of getCostOfActions and the heuristic function for a state.
     pqueue = util.PriorityQueue()
-    checked = list()
+    checked = set()
     path = list()
     pqueue.push((problem.getStartState(), []), 0)
     while pqueue.isEmpty() == False:
         cur_state,cur_action = pqueue.pop()
         if cur_state not in checked:
-            checked.append(cur_state)
+            checked.add(cur_state)
             if problem.isGoalState(cur_state) == False:
                 all_successors = problem.getSuccessors(cur_state)
                 for state,action,cost in all_successors:
