@@ -298,7 +298,7 @@ class CornersProblem(search.SearchProblem):
         "*** YOUR CODE HERE ***"
         """ A state space can be the start coordinates and a list to hold visited corners"""
         check_list = [False, False, False, False]  #list with a position for every corner. True if it's visited, False if not.
-        state = (self.startingPosition, check_list)  #state is a tuple with the coordinates of pacman and the list for the corners.
+        state = (self.startingPosition, check_list)  #state is a tuple with its coordinates and the list for the corners.
         return state
         #util.raiseNotDefined()
 
