@@ -75,6 +75,20 @@ class ReflexAgent(Agent):
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
         "*** YOUR CODE HERE ***"
+        currentFood = currentGameState.getFood()
+        all_manhattans = list()
+        for ghost_state in newGhostStates:
+            if ghost_state.scaredTimer == 0 and ghost_state.getPosition() == newPos: #if there will be a ghost where the pacman will go with the action, DON'T GO THERE!
+                return float('-inf')
+        if action == Directions.STOP: # pacman should not stop because a ghost might get nearer to it and pacman will not even look for food.
+            return float('-inf')
+        if (len(newFood.asList()) == len(currentFood.asList()) - 1): #if pacman will eat a food with the action and there is not a ghost there, then go there.
+            return float('inf')
+        for food in currentGameState.getFood().asList(): 
+            all_manhattans.append((-1) * manhattanDistance(food, newPos)) #we want the biggest manhattan distance from a food to be the worst case, so we multiply them with -1.
+        best_manhattan = max(all_manhattans) #maximum will be the smallest manhattan distance from a food.
+        return best_manhattan 
+
         return successorGameState.getScore()
 
 def scoreEvaluationFunction(currentGameState: GameState):
