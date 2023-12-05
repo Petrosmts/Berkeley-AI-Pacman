@@ -85,7 +85,10 @@ class ReflexAgent(Agent):
         if (len(newFood.asList()) == len(currentFood.asList()) - 1): #if pacman will eat a food with the action and there is not a ghost there, then go there.
             return float('inf')
         for food in currentGameState.getFood().asList(): 
-            all_manhattans.append((-1) * manhattanDistance(food, newPos)) #we want the biggest manhattan distance from a food to be the worst case, so we multiply them with -1.
+            manh = manhattanDistance(food, newPos)
+            if manh == 0: #if pacman will be in the same position with a food, go there so it can eat it
+                return float('inf')
+            all_manhattans.append(1 / manh) #we want the biggest manhattan distance from a food to be the worst case, so we multiply them with -1.
         best_manhattan = max(all_manhattans) #maximum will be the smallest manhattan distance from a food.
         return best_manhattan 
 
@@ -257,6 +260,42 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         legal moves.
         """
         "*** YOUR CODE HERE ***"
+        pacman_index = 0
+        def max_value(curr_state: GameState, game_depth):
+            game_depth += 1
+            if game_depth == self.depth or curr_state.isWin() == True or curr_state.isLose() == True:
+                return self.evaluationFunction(curr_state)
+            v = float('-inf')
+            for action in curr_state.getLegalActions(pacman_index):
+                succ_state = curr_state.generateSuccessor(pacman_index, action)
+                v = max(v, expectimax_value(succ_state, 1, game_depth))
+            return v
+        
+
+        def expectimax_value(curr_state: GameState, ghost_index, game_depth):
+            all_actions = curr_state.getLegalActions(ghost_index)
+            if curr_state.isWin() == True or curr_state.isLose() == True: 
+                return self.evaluationFunction(curr_state)
+            v = float('inf')
+            sum_of_values = 0
+            for action in all_actions:
+                succ_state = curr_state.generateSuccessor(ghost_index, action)
+                if ghost_index == (curr_state.getNumAgents() - 1):
+                    v = max_value(succ_state,game_depth)
+                else:
+                    next_ghost = ghost_index + 1
+                    v = expectimax_value(succ_state, next_ghost, game_depth)
+                sum_of_values += v
+            return sum_of_values / len(all_actions)
+        
+
+        minimax_list = list()
+        for action in gameState.getLegalActions(pacman_index):
+            curr_state = gameState.generateSuccessor(pacman_index, action)
+            minimax_value = expectimax_value(curr_state, 1, 0)
+            minimax_list.append((minimax_value, action))
+            best_action = max(minimax_list)[1]
+        return best_action
         util.raiseNotDefined()
 
 def betterEvaluationFunction(currentGameState: GameState):
