@@ -75,15 +75,12 @@ class ReflexAgent(Agent):
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
         "*** YOUR CODE HERE ***"
-        currentFood = currentGameState.getFood()
         all_manhattans = list()
         for ghost_state in newGhostStates:
             if ghost_state.scaredTimer == 0 and ghost_state.getPosition() == newPos: #if there will be a ghost where the pacman will go with the action, DON'T GO THERE!
                 return float('-inf')
         if action == Directions.STOP: # pacman should not stop because a ghost might get nearer to it and pacman will not even look for food.
             return float('-inf')
-        if (len(newFood.asList()) == len(currentFood.asList()) - 1): #if pacman will eat a food with the action and there is not a ghost there, then go there.
-            return float('inf')
         for food in currentGameState.getFood().asList(): 
             manh = manhattanDistance(food, newPos)
             if manh == 0: #if pacman will be in the same position with a food, go there so it can eat it
@@ -154,29 +151,31 @@ class MinimaxAgent(MultiAgentSearchAgent):
         """
         "*** YOUR CODE HERE ***"
 
-        #I followed the same logic as the minimax algorithm from the slides of our lesson
+        #I followed the same logic as the minimax algorithm from the slides of our lesson.
         
         pacman_index = 0
         def max_value(curr_state: GameState, game_depth):
-            game_depth += 1
-            if game_depth == self.depth or curr_state.isWin() == True or curr_state.isLose() == True:
+            game_depth += 1 #every time a node is max, we must increase the current depth.
+            if game_depth == self.depth or curr_state.isWin() == True or curr_state.isLose() == True: #deepening must stop if pacman wins or loses, or the current depth is equal to the depth of the game.
                 return self.evaluationFunction(curr_state)
+            #for every available action, I do exactly what the slides of the lesson show us to do.
             v = float('-inf')
             for action in curr_state.getLegalActions(pacman_index):
                 succ_state = curr_state.generateSuccessor(pacman_index, action)
-                v = max(v, min_value(succ_state, 1, game_depth))
+                v = max(v, min_value(succ_state, 1, game_depth)) 
             return v
         
 
         def min_value(curr_state: GameState, ghost_index, game_depth):
-            if curr_state.isWin() == True or curr_state.isLose() == True: 
+            if curr_state.isWin() == True or curr_state.isLose() == True: #deepening must stop if pacman wins or loses.
                 return self.evaluationFunction(curr_state)
+            #for every available action, I do exactly what the slides of the lesson show us to do.
             v = float('inf')
             for action in curr_state.getLegalActions(ghost_index):
                 succ_state = curr_state.generateSuccessor(ghost_index, action)
-                if ghost_index == (curr_state.getNumAgents() - 1):
+                if ghost_index == (curr_state.getNumAgents() - 1): #if it's the last ghost, then pacman is playing.
                     v = min(v, max_value(succ_state,game_depth))
-                else:
+                else: #if not, then the next ghost is playing.
                     next_ghost = ghost_index + 1
                     v = min(v, min_value(succ_state, next_ghost, game_depth))
             return v
@@ -186,10 +185,9 @@ class MinimaxAgent(MultiAgentSearchAgent):
         for action in gameState.getLegalActions(pacman_index):
             curr_state = gameState.generateSuccessor(pacman_index, action)
             minimax_value = min_value(curr_state, 1, 0)
-            minimax_list.append((minimax_value, action))
-            best_action = max(minimax_list)[1]
+            minimax_list.append((minimax_value, action)) #we put every minimax value in a tuple with the action that caused her and the tuple in a list.
+            best_action = max(minimax_list)[1] #pacman is a max node so it will choose the action with the biggest minimax value.
         return best_action
-       
         util.raiseNotDefined()
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
@@ -202,7 +200,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-
+        #I followed the same logic as the alpha-beta algorithm from the slides of our lesson.
         pacman_index = 0
         def max_value(curr_state: GameState, game_depth, a, b):
             game_depth += 1
@@ -218,15 +216,15 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             return v
               
 
-        def min_value(curr_state, ghost_index, game_depth, a, b):
+        def min_value(curr_state: GameState, ghost_index, game_depth, a, b):
             if curr_state.isWin() == True or curr_state.isLose() == True: 
                 return self.evaluationFunction(curr_state) 
             v = float('inf')          
             for action in curr_state.getLegalActions(ghost_index):
                 succ_state = curr_state.generateSuccessor(ghost_index,action)
-                if ghost_index == (curr_state.getNumAgents() - 1):
+                if ghost_index == (curr_state.getNumAgents() - 1): #if it's the last ghost, then pacman is playing.
                     v = min(v, max_value(succ_state, game_depth, a, b))
-                else:
+                else: #if not, then the next ghost is playing.
                     next_ghost = ghost_index + 1
                     v = min(v, min_value(succ_state, next_ghost, game_depth, a, b))
                 if v < a:
@@ -240,10 +238,10 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         minimax_list = list()
         for action in gameState.getLegalActions(pacman_index):
             curr_state = gameState.generateSuccessor(pacman_index, action)
-            alphabeta_value= min_value(curr_state, 1, 0, a, b)
-            a = max(a,alphabeta_value) #we have to update a for the root node too
-            minimax_list.append((alphabeta_value, action))
-            best_action = max(minimax_list)[1]
+            alphabeta_value= min_value(curr_state, 1, 0, a, b) #we find alphabeta value for every action.
+            a = max(a,alphabeta_value) #we have to update the variable a for the root node too.
+            minimax_list.append((alphabeta_value, action)) #we put every alphabeta value in a tuple with the action that caused her and the tuple in a list.
+            best_action = max(minimax_list)[1] #pacman is a max node so it will choose the action with the biggest alphabeta value.
         return best_action
         util.raiseNotDefined()
 
@@ -260,6 +258,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         legal moves.
         """
         "*** YOUR CODE HERE ***"
+        #we implement the expectimax algorithm.
         pacman_index = 0
         def max_value(curr_state: GameState, game_depth):
             game_depth += 1
@@ -280,21 +279,21 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             sum_of_values = 0
             for action in all_actions:
                 succ_state = curr_state.generateSuccessor(ghost_index, action)
-                if ghost_index == (curr_state.getNumAgents() - 1):
+                if ghost_index == (curr_state.getNumAgents() - 1): #if it's the last ghost, then pacman is playing.
                     v = max_value(succ_state,game_depth)
-                else:
+                else: #if not, then the next ghost is playing.
                     next_ghost = ghost_index + 1
                     v = expectimax_value(succ_state, next_ghost, game_depth)
                 sum_of_values += v
-            return sum_of_values / len(all_actions)
+            return sum_of_values / len(all_actions) #the expectimax value of a node, is the average value of the values of all actions. 
         
 
         minimax_list = list()
         for action in gameState.getLegalActions(pacman_index):
             curr_state = gameState.generateSuccessor(pacman_index, action)
             minimax_value = expectimax_value(curr_state, 1, 0)
-            minimax_list.append((minimax_value, action))
-            best_action = max(minimax_list)[1]
+            minimax_list.append((minimax_value, action)) #we put every expectimax value in a tuple with the action that caused her and the tuple in a list.
+            best_action = max(minimax_list)[1] #pacman is a max node so it will choose the action with the biggest expectimax value.
         return best_action
         util.raiseNotDefined()
 
@@ -306,6 +305,7 @@ def betterEvaluationFunction(currentGameState: GameState):
     DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
+    
     util.raiseNotDefined()
 
 # Abbreviation
