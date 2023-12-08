@@ -330,7 +330,7 @@ def betterEvaluationFunction(currentGameState: GameState):
         manh = manhattanDistance(currentPos,food)
         if(manh < min_distance): #we find the distance between the nearest food to pacman and pacman.
             min_distance = manh
-    evaluation += (100 - 0.5*min_distance) #after many tests, I thought about this and I get a very nice score in autograder. The smallest is the distance between the nearest food to pacman and pacman, the biggest value we add to evaluation.  
+    evaluation += (5 - 0.5 * min_distance) #after many tests, I thought about this and I get a very nice score in autograder. The smallest is the distance between the nearest food to pacman and pacman, the biggest value we add to evaluation.  
     return evaluation + currentGameState.getScore() 
     util.raiseNotDefined()
 
