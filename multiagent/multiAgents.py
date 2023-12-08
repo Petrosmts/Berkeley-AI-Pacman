@@ -235,13 +235,13 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
         a = float('-inf')
         b = float('inf')
-        minimax_list = list()
+        alphabeta_list = list()
         for action in gameState.getLegalActions(pacman_index):
             curr_state = gameState.generateSuccessor(pacman_index, action)
             alphabeta_value= min_value(curr_state, 1, 0, a, b) #we find alphabeta value for every action.
             a = max(a,alphabeta_value) #we have to update the variable a for the root node too.
-            minimax_list.append((alphabeta_value, action)) #we put every alphabeta value in a tuple with the action that caused her and the tuple in a list.
-            best_action = max(minimax_list)[1] #pacman is a max node so it will choose the action with the biggest alphabeta value.
+            alphabeta_list.append((alphabeta_value, action)) #we put every alphabeta value in a tuple with the action that caused her and the tuple in a list.
+            best_action = max(alphabeta_list)[1] #pacman is a max node so it will choose the action with the biggest alphabeta value.
         return best_action
         util.raiseNotDefined()
 
@@ -288,12 +288,12 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             return sum_of_values / len(all_actions) #the expectimax value of a node, is the average value of the values of all actions. 
         
 
-        minimax_list = list()
+        expectimax_list = list()
         for action in gameState.getLegalActions(pacman_index):
             curr_state = gameState.generateSuccessor(pacman_index, action)
-            minimax_value = expectimax_value(curr_state, 1, 0)
-            minimax_list.append((minimax_value, action)) #we put every expectimax value in a tuple with the action that caused her and the tuple in a list.
-            best_action = max(minimax_list)[1] #pacman is a max node so it will choose the action with the biggest expectimax value.
+            expectmax_value = expectimax_value(curr_state, 1, 0)
+            expectimax_list.append((expectmax_value, action)) #we put every expectimax value in a tuple with the action that caused her and the tuple in a list.
+            best_action = max(expectimax_list)[1] #pacman is a max node so it will choose the action with the biggest expectimax value.
         return best_action
         util.raiseNotDefined()
 
