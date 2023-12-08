@@ -311,7 +311,7 @@ def betterEvaluationFunction(currentGameState: GameState):
     currentGhostStates = currentGameState.getGhostStates()
 
     min_distance = 1000 #I tried to put a very high value(like float('inf') or even 1200) but it didn't work so I put 1000).
-    evaluation = 0 #we initialize the variable evaluation with 0 and the function will return evaluation + state's score.
+    evaluation = 0 #we initialize the variable evaluation with 0 and the function will return 'evaluation + state's score'.
 
     #check for ghosts
     for ghost_state in currentGhostStates: 
@@ -329,7 +329,7 @@ def betterEvaluationFunction(currentGameState: GameState):
     for food in currentFood:
         manh = manhattanDistance(currentPos,food)
         if(manh < min_distance): #we find the distance between the nearest food to pacman and pacman.
-           min_distance = manh
+            min_distance = manh
     evaluation += (100 - 0.5*min_distance) #after many tests, I thought about this and I get a very nice score in autograder. The smallest is the distance between the nearest food to pacman and pacman, the biggest value we add to evaluation.  
     return evaluation + currentGameState.getScore() 
     util.raiseNotDefined()
