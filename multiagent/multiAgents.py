@@ -305,7 +305,33 @@ def betterEvaluationFunction(currentGameState: GameState):
     DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
-    
+    #useful information we can extract.
+    currentFood = currentGameState.getFood().asList()
+    currentPos = currentGameState.getPacmanPosition()
+    currentGhostStates = currentGameState.getGhostStates()
+
+    min_distance = 1000 #I tried to put a very high value(like float('inf') or even 1200) but it didn't work so I put 1000)
+    evaluation = currentGameState.getScore() #evaluation will be a value, which we will found in a while, plus the score of the state. So we initialize the variable evaluation with the state's score.
+
+    #check for ghosts
+    for ghost_state in currentGhostStates: 
+        current_ghost_position = ghost_state.getPosition() 
+        if(ghost_state.scaredTimer == 0): #if a ghost is NOT scared.
+            manh = manhattanDistance(currentPos, current_ghost_position)
+            if(manh == 0): #if a ghost will be in the same position with the pacman in this state we have to reduce our evaluation(I tried with 20 and it worked).
+                evaluation -= 20 
+            if(manh == 1): #if a ghost will be next to pacman, we have to reduce our evaluation(I reduce with less than 20(with 10) because it's better to have a ghost next to you rather than on you:)).
+                evaluation -= 10
+        else: #a scared ghost can be eaten from pacman so we must increase the evaluation.
+            evaluation += 150 #I tried to add 200 but with 150 I get better score.
+
+    #check for foods
+    for food in currentFood:
+        manh = manhattanDistance(currentPos,food)
+        if(manh < min_distance): #we find the distance between the nearest food to pacman and pacman.
+           min_distance = manh
+    evaluation += (100 - 0.5*min_distance) #after many tests, I thought about this and I get a very nice score in autograder. The smallest is the distance between the nearest food to pacman and pacman, the biggest value we add to evaluation.  
+    return evaluation 
     util.raiseNotDefined()
 
 # Abbreviation
