@@ -85,7 +85,7 @@ class ReflexAgent(Agent):
             manh = manhattanDistance(food, newPos)
             if manh == 0: #if pacman will be in the same position with a food, go there so it can eat it
                 return float('inf')
-            all_manhattans.append(1 / manh) #we want the biggest manhattan distance from a food to be the worst case, so we multiply them with -1.
+            all_manhattans.append(1 / manh) #we want the biggest manhattan distance from a food to be the worst case, so we inverse it.
         best_manhattan = max(all_manhattans) #maximum will be the smallest manhattan distance from a food.
         return best_manhattan 
 
