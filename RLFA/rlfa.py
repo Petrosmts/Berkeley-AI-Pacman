@@ -1,5 +1,3 @@
-import os
-import time
 from csp import *
 
 def var_weight(assignment, var, csp): #for dom_wdeg

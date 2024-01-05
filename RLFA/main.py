@@ -1,5 +1,6 @@
 import os
 from rlfa import *
+import time
 
 
 def grouping(): #this function matches the files depending on the name of each test. I found the reading from file functions with the os library in the Internet.
@@ -58,15 +59,19 @@ if __name__ == '__main__':
                 running_test = rlfa(var_name, dom_name, ctr_name) #create the object with class rlfa.
                 alg1 = input("Type the name of the algorithm you want. FC or MAC? ")
                 if alg1 == "FC":
+                    start = time.time()
                     result = backtracking_search(running_test, dom_wdeg, unordered_domain_values, forward_checking_with_dom_wdeg)
+                    end = time.time()
                     print(result,'\n')
                     print("Numbers of constraints checked:",running_test.ctrs_checked)
-                    print("Time passed, ")
+                    print("Time passed", round(end - start, 6), "seconds")
                 elif alg1 == "MAC":
+                    start = time.time()
                     result = backtracking_search(running_test, dom_wdeg, unordered_domain_values, mac_with_dom_wdeg)
+                    end = time.time()
                     print(result,'\n')
                     print("Numbers of constraints checked:",running_test.ctrs_checked)
-                    print("Time passed, ")
+                    print("Time passed", round(end - start, 6), "seconds")
                 else:
                     print("Name you gave is not valid.")
                 go_on = input("\nWant to check more tests? Press Y for YES or anything else for NO: ")
