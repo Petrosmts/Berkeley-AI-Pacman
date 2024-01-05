@@ -1,12 +1,24 @@
 import os
+import time
 from csp import *
+
+def var_weight(assignment, var, csp):
+    total_sum = 1
+    for neigh in csp.neighbors[var]:
+        if neigh in assignment: #Hence, the weighted degree of a variable Xi corresponds to the sum of the weights of the constraints involving Xi and at least another uninstantiated variable.
+            continue
+        key = (var, neigh)
+        total_sum += csp.weights_for_ctrs[key]
+    return total_sum
+
 
 class rlfa(CSP):
     def __init__(self, variables, domains, constraints):
         var_for_csp = [] #list with variables.
         dom_for_csp = {} #dictionary where the key is a variable and the element is a list with all possible values.
         neighs_for_csp = {} #dictionary where
-        list_for_ctrs = [] #so we can know the symbol(> or =) for each constraint. This list will have tuples with each constraint properly seperated with function split.
+        dict_for_ctrs = {} #so we can know the symbol(> or =) for each constraint. This list will have tuples with each constraint properly seperated with function split(Tried list first but it was slow due to O(n).
+        weights_for_ctrs = {}
         for index, var in enumerate(variables):
             if index > 0: #first element is the amount of variables, we don't want to check that.
                 var_domain = var.split(" ") #variable is var_dom[0], domain is var_dom[1].
@@ -24,88 +36,90 @@ class rlfa(CSP):
                     if in_dex > 0: #first element is the amount of constraints, we don't want to check that.
                         tctr = ctr.split(" ")
                         tctr[len(tctr) - 1] = tctr[len(tctr) - 1].replace('\n','') #last element must not have \n in it.
-                        cons = (tctr[0], tctr[1], tctr[2], tctr[3])
-                        list_for_ctrs.append(cons)
+                        key = (tctr[0], tctr[1]) 
+                        rev_key = (tctr[1], tctr[0])
+                        value = (tctr[2], tctr[3])
+                        dict_for_ctrs[key] = value
+                        weights_for_ctrs[key] = 1
+                        weights_for_ctrs[rev_key] = 1
                         if var_domain[0] == tctr[0]: #if the variable we are examining is the first variable in each constraint, then the second is neighbor of the first.
                             neighs_for_var.append(tctr[1])
                         elif var_domain[0] == tctr[1]: #if the variable we are examining is the second variable in each constraint, then the first is neighbor of the second.
                             neighs_for_var.append(tctr[0])
                 neighs_for_csp[var_domain[0]] = neighs_for_var
-                self.list_for_ctrs = list_for_ctrs
+                self.dict_for_ctrs = dict_for_ctrs
+                self.weights_for_ctrs = weights_for_ctrs
             super().__init__(var_for_csp, dom_for_csp, neighs_for_csp, self.f) #calling the CSP class init function with super().__init__ giving the necessary arguments.
 
 
-    def f(self, A, a, B, b): #constraint function
-        for var1, var2, symbol, k in self.list_for_ctrs: 
-            if (var1 == A and var2 == B) or (var1 == B and var2 == A): #variables might be given with the wrong order.
-                if symbol == '>':
-                    if abs(int(a)-int(b)) > int(k):
-                        return True
-                elif symbol == '=':
-                    if abs(int(a)-int(b)) == int(k):
-                        return True
-                return False
+    def f(self, A, a, B, b): #constraint function #variables might be given with the wrong order.
+        symbol, k = self.dict_for_ctrs.get((A, B)) or self.dict_for_ctrs.get((B, A)) #variables might be given with the wrong order.
+        if symbol == '>':
+            if abs(int(a)-int(b)) > int(k):
+                return True
+        elif symbol == '=':
+            if abs(int(a)-int(b)) == int(k):
+                return True
+        return False
             
 
-def grouping(): #this function matches the files depending on the name of each test.
-    content = list()
-    var_list = list() #list with files with name var...
-    dom_list = list() #list with files with name dom...
-    ctr_list = list() #list with files with name ctr...
-    dir = '/home/petrakis/ArtIn/RLFA/rlfap'
-    if os.path.exists(dir) == True: 
-        for name in os.listdir(dir) : 
-            if name != "odigies.txt" and name[len(name) - 4 : len(name)] == ".txt": #we want to check only the txt files and NOT the odigies.txt
-                with open(os.path.join(dir,name), 'r') as cur_file: 
-                    content = cur_file.readlines() #content is a list where each line of cur_file is a list item.
-                    if name[0] == 'v':
-                        var_list.append((name, content))
-                    elif name[0] == 'd':
-                        dom_list.append((name, content))
-                    elif name[0] == 'c':
-                        ctr_list.append((name, content))
-                    cur_file.close()
-    else: 
-        print("Error: Directory given is wrong!")
-    group_list = list() #function will return this list.
-    temp = " "
-    for var,cont1 in var_list:
-        sol1 = cont1
-        temp = var[3:len(var)-4] #name of the test so we can match correctly the files.
-        for dom,cont2 in dom_list:
-            temp2 = "dom" + temp + ".txt"
-            if dom == temp2: #if file dom has the same test name with file var then save the content and remove it from the dom files list.
-                sol2 = cont2
-                dom_list.remove((dom, cont2))
-                break
-        for ctr,cont3 in ctr_list:
-            temp3 = "ctr" + temp + ".txt"
-            if ctr == temp3: #if file ctr has the same test name with file var then save the content and remove it from the ctr files list.
-                sol3 = cont3
-                ctr_list.remove((ctr, cont3))
-                break
-        group_list.append((sol1, sol2, sol3, temp)) #put in the list a tuple with content of 3 files(var, dom, ctr) with the same test name and the test name itself.
-    return group_list
+def dom_wdeg(assignment, csp):
+    csp.support_pruning()
+    variable_returned = 0
+    minimum = 9999999
+    for var in csp.variables:
+        if var not in assignment:
+            dom = len(csp.curr_domains[var])
+            wdeg = var_weight(assignment, var, csp)
+            ratio = dom / wdeg
+            if ratio < minimum:
+                variable_returned = var
+                minimum = ratio
+    return variable_returned
 
 
-if __name__ == '__main__':
-    group_list = grouping() #group correctly the files.
-    print("Hey! Type one of the following test names to see this test's solution!(if there is one)")
-    for var_name, dom_name, ctr_name, test_name in group_list:
-        print(test_name) #print all test names.
-    go_on = 'Y'
-    while go_on == 'Y':
-        found = False
-        name = input("Give me the test's name: ")
-        for var_name, dom_name, ctr_name, test_name in group_list:
-            if name == test_name: #if name given is the same with the test's name.
-                found = True
-                running_test = rlfa(var_name, dom_name, ctr_name) #create the object with class rlfa.
-                result = backtracking_search(running_test, mrv, unordered_domain_values, forward_checking)
-                print(result) #print the result of backtracking_search.
-                go_on = input("\nWant to check more tests? Press Y for YES or anything else for NO: ")
-        if found == False: #if name given doesn't belong to any test.
-            print("Wrong input! Try again!")
+def forward_checking_with_dom_wdeg(csp, var, value, assignment, removals):
+    """Prune neighbor values inconsistent with var=value."""
+    csp.support_pruning()
+    for B in csp.neighbors[var]:
+        if B not in assignment:
+            for b in csp.curr_domains[B][:]:
+                if not csp.constraints(var, value, B, b):
+                    csp.prune(B, b, removals)
+            if not csp.curr_domains[B]:
+                key = (var, B)
+                rev_key = (B, var)
+                csp.weights_for_ctrs[key] += 1
+                csp.weights_for_ctrs[rev_key] += 1
+                return False
+    return True
+
+
+def AC3_with_dom_wdeg(csp, queue=None, removals=None, arc_heuristic=dom_j_up):
+    """[Figure 6.3]"""
+    if queue is None:
+        queue = {(Xi, Xk) for Xi in csp.variables for Xk in csp.neighbors[Xi]}
+    csp.support_pruning()
+    queue = arc_heuristic(csp, queue)
+    checks = 0
+    while queue:
+        (Xi, Xj) = queue.pop()
+        revised, checks = revise(csp, Xi, Xj, removals, checks)
+        if revised:
+            if not csp.curr_domains[Xi]:
+                key = (Xi, Xj)
+                csp.weights_for_ctrs[key] += 1
+                return False, checks # CSP is inconsistent
+            for Xk in csp.neighbors[Xi]:
+                if Xk != Xj:
+                    queue.add((Xk, Xi))
+    return True, checks # CSP is satisfiable
+
+
+def mac_with_dom_wdeg(csp, var, value, assignment, removals, constraint_propagation=AC3_with_dom_wdeg):
+    """Maintain arc consistency."""
+    return constraint_propagation(csp, {(X, var) for X in csp.neighbors[var]}, removals)
+
 
             
 
