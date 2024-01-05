@@ -45,7 +45,7 @@ def grouping(): #this function matches the files depending on the name of each t
 
 if __name__ == '__main__':
     group_list = grouping() #group correctly the files.
-    print("Hey! Type one of the following test names to see this test's solution!(if there is one)")
+    print("Hey! Type one of the following test names to see this test's solution(if there is one)! All tests run with dom_wdeg function instead of mrv.")
     for var_name, dom_name, ctr_name, test_name in group_list:
         print(test_name) #print all test names.
     go_on = 'Y'
@@ -56,8 +56,19 @@ if __name__ == '__main__':
             if name == test_name: #if name given is the same with the test's name.
                 found = True
                 running_test = rlfa(var_name, dom_name, ctr_name) #create the object with class rlfa.
-                result = backtracking_search(running_test, dom_wdeg, unordered_domain_values, mac_with_dom_wdeg)
-                print(result) #print the result of backtracking_search.
+                alg1 = input("Type the name of the algorithm you want. FC or MAC? ")
+                if alg1 == "FC":
+                    result = backtracking_search(running_test, dom_wdeg, unordered_domain_values, forward_checking_with_dom_wdeg)
+                    print(result,'\n')
+                    print("Numbers of constraints checked:",running_test.ctrs_checked)
+                    print("Time passed, ")
+                elif alg1 == "MAC":
+                    result = backtracking_search(running_test, dom_wdeg, unordered_domain_values, mac_with_dom_wdeg)
+                    print(result,'\n')
+                    print("Numbers of constraints checked:",running_test.ctrs_checked)
+                    print("Time passed, ")
+                else:
+                    print("Name you gave is not valid.")
                 go_on = input("\nWant to check more tests? Press Y for YES or anything else for NO: ")
         if found == False: #if name given doesn't belong to any test.
             print("Wrong input! Try again!")

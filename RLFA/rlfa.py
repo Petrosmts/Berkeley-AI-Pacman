@@ -2,7 +2,7 @@ import os
 import time
 from csp import *
 
-def var_weight(assignment, var, csp):
+def var_weight(assignment, var, csp): #for dom_wdeg
     total_sum = 1
     for neigh in csp.neighbors[var]:
         if neigh in assignment: #Hence, the weighted degree of a variable Xi corresponds to the sum of the weights of the constraints involving Xi and at least another uninstantiated variable.
@@ -14,6 +14,7 @@ def var_weight(assignment, var, csp):
 
 class rlfa(CSP):
     def __init__(self, variables, domains, constraints):
+        self.ctrs_checked = 0
         var_for_csp = [] #list with variables.
         dom_for_csp = {} #dictionary where the key is a variable and the element is a list with all possible values.
         neighs_for_csp = {} #dictionary where
@@ -54,6 +55,7 @@ class rlfa(CSP):
 
     def f(self, A, a, B, b): #constraint function #variables might be given with the wrong order.
         symbol, k = self.dict_for_ctrs.get((A, B)) or self.dict_for_ctrs.get((B, A)) #variables might be given with the wrong order.
+        self.ctrs_checked += 1
         if symbol == '>':
             if abs(int(a)-int(b)) > int(k):
                 return True
