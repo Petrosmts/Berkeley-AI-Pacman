@@ -1,6 +1,7 @@
 import os
 from rlfa import *
 import time
+import threading
 
 
 def grouping(): #this function matches the files depending on the name of each test. I found the reading from file functions with the os library in the Internet.
@@ -43,29 +44,34 @@ def grouping(): #this function matches the files depending on the name of each t
         group_list.append((sol1, sol2, sol3, temp)) #put in the list a tuple with content of 3 files(var, dom, ctr) with the same test name and the test name itself.
     return group_list
 
+def function_timeout():
+    print("Time limit exceeded. Bye!")
+    os._exit(1)
 
 if __name__ == '__main__':
     group_list = grouping() #group correctly the files.
     print("Hey! Type one of the following test names to see this test's solution(if there is one)! All tests run with dom_wdeg function instead of mrv.")
     for var_name, dom_name, ctr_name, test_name in group_list:
         print(test_name) #print all test names.
-    go_on = 'Y'
-    while go_on == 'Y':
+    go_on = 'y'
+    while go_on == 'y':
+        timeout_thread = threading.Timer(500, function_timeout) #After 500 seconds, timeout.
         found = False
         name = input("Give me the test's name: ")
         for var_name, dom_name, ctr_name, test_name in group_list:
             if name == test_name: #if name given is the same with the test's name.
                 found = True
                 running_test = rlfa(var_name, dom_name, ctr_name) #create the object with class rlfa.
-                alg1 = input("Type the name of the algorithm you want. FC or MAC? ")
-                if alg1 == "FC":
+                alg1 = input("Type the name of the algorithm you want. fc or mac? ")
+                timeout_thread.start()
+                if alg1 == "fc":
                     start = time.time()
                     result = backtracking_search(running_test, dom_wdeg, unordered_domain_values, forward_checking_with_dom_wdeg)
                     end = time.time()
                     print(result,'\n')
                     print("Numbers of constraints checked:",running_test.ctrs_checked)
                     print("Time passed", round(end - start, 6), "seconds")
-                elif alg1 == "MAC":
+                elif alg1 == "mac":
                     start = time.time()
                     result = backtracking_search(running_test, dom_wdeg, unordered_domain_values, mac_with_dom_wdeg)
                     end = time.time()
@@ -74,6 +80,7 @@ if __name__ == '__main__':
                     print("Time passed", round(end - start, 6), "seconds")
                 else:
                     print("Name you gave is not valid.")
-                go_on = input("\nWant to check more tests? Press Y for YES or anything else for NO: ")
+        timeout_thread.cancel() 
         if found == False: #if name given doesn't belong to any test.
-            print("Wrong input! Try again!")
+            print("Wrong input! Try again!")   
+        go_on = input("\nWant to check more tests? Press y for YES or anything else for NO: ")   
