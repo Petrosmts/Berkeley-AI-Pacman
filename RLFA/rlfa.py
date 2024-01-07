@@ -65,8 +65,7 @@ class rlfa(CSP):
 
 def dom_wdeg(assignment, csp):
     csp.support_pruning()
-    variable_returned = 0
-    minimum = 9999999
+    minimum = float('inf')
     for var in csp.variables:
         if var not in assignment:
             dom = len(csp.curr_domains[var])

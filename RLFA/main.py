@@ -62,13 +62,14 @@ if __name__ == '__main__':
             if name == test_name: #if name given is the same with the test's name.
                 found = True
                 running_test = rlfa(var_name, dom_name, ctr_name) #create the object with class rlfa.
-                alg1 = input("Type the name of the algorithm you want. fc or mac? ")
+                alg1 = input("Type the name of the algorithm you want. fc or mac or min_conflicts? ")
                 timeout_thread.start()
                 if alg1 == "fc":
                     start = time.time()
                     result = backtracking_search(running_test, dom_wdeg, unordered_domain_values, forward_checking_with_dom_wdeg)
                     end = time.time()
                     print(result,'\n')
+                    print("Assignments created:", running_test.nassigns)
                     print("Numbers of constraints checked:",running_test.ctrs_checked)
                     print("Time passed", round(end - start, 6), "seconds")
                 elif alg1 == "mac":
@@ -76,6 +77,15 @@ if __name__ == '__main__':
                     result = backtracking_search(running_test, dom_wdeg, unordered_domain_values, mac_with_dom_wdeg)
                     end = time.time()
                     print(result,'\n')
+                    print("Assignments created:", running_test.nassigns)
+                    print("Numbers of constraints checked:",running_test.ctrs_checked)
+                    print("Time passed", round(end - start, 6), "seconds")
+                elif alg1 == "min_conflicts":
+                    start = time.time()
+                    result = min_conflicts(running_test)
+                    print(result,'\n')
+                    end = time.time()
+                    print("Assignments created:", running_test.nassigns)
                     print("Numbers of constraints checked:",running_test.ctrs_checked)
                     print("Time passed", round(end - start, 6), "seconds")
                 else:
