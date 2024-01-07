@@ -10,20 +10,17 @@ def grouping(): #this function matches the files depending on the name of each t
     dom_list = list() #list with files with name dom...
     ctr_list = list() #list with files with name ctr...
     dir = '/home/petrakis/ArtIn/RLFA/rlfap'
-    if os.path.exists(dir) == True: 
-        for name in os.listdir(dir) : 
-            if name != "odigies.txt" and name[len(name) - 4 : len(name)] == ".txt": #we want to check only the txt files and NOT the odigies.txt
-                with open(os.path.join(dir,name), 'r') as cur_file: 
-                    content = cur_file.readlines() #content is a list where each line of cur_file is a list item.
-                    if name[0] == 'v':
-                        var_list.append((name, content))
-                    elif name[0] == 'd':
-                        dom_list.append((name, content))
-                    elif name[0] == 'c':
-                        ctr_list.append((name, content))
-                    cur_file.close()
-    else: 
-        print("Error: Directory given is wrong!")
+    for name in os.listdir(dir) : 
+        if name != "odigies.txt" and name[len(name) - 4 : len(name)] == ".txt": #we want to check only the txt files and NOT the odigies.txt
+            with open(os.path.join(dir,name), 'r') as cur_file: 
+                content = cur_file.readlines() #content is a list where each line of cur_file is a list item.
+                if name[0] == 'v':
+                    var_list.append((name, content))
+                elif name[0] == 'd':
+                    dom_list.append((name, content))
+                elif name[0] == 'c':
+                    ctr_list.append((name, content))
+                cur_file.close()
     group_list = list() #function will return this list.
     temp = " "
     for var,cont1 in var_list:
