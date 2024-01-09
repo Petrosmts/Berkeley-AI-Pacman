@@ -1,7 +1,7 @@
 import os
 from rlfa import *
 import time
-import threading
+import threading #for timeout
 
 
 def grouping(): #this function matches the files depending on the name of each test. I found the reading from file functions with the os library in the Internet.
@@ -11,7 +11,7 @@ def grouping(): #this function matches the files depending on the name of each t
     ctr_list = list() #list with files with name ctr...
     dir = '/home/petrakis/ArtIn/RLFA/rlfap'
     for name in os.listdir(dir) : 
-        if name != "odigies.txt" and name[len(name) - 4 : len(name)] == ".txt": #we want to check only the txt files and NOT the odigies.txt
+        if name != "odigies.txt" and name[len(name) - 4 : len(name)] == ".txt": #we want to check only the txt files(because if you unzip it there are some files ending with :ZoneIdentifier) and NOT the odigies.txt
             with open(os.path.join(dir,name), 'r') as cur_file: 
                 content = cur_file.readlines() #content is a list where each line of cur_file is a list item.
                 if name[0] == 'v':
@@ -52,18 +52,18 @@ if __name__ == '__main__':
         print(test_name) #print all test names.
     go_on = 'y'
     while go_on == 'y':
-        timeout_thread = threading.Timer(500, function_timeout) #After 500 seconds, timeout.
+        var_timeout = threading.Timer(500, function_timeout) #after 500 seconds, timeout.
         found = False
         name = input("Give me the test's name: ")
         for var_name, dom_name, ctr_name, test_name in group_list:
             if name == test_name: #if name given is the same with the test's name.
                 found = True
                 running_test = rlfa(var_name, dom_name, ctr_name) #create the object with class rlfa.
-                alg1 = input("Type the name of the algorithm you want. fc or mac or min_conflicts? ")
-                timeout_thread.start()
+                alg1 = input("Type the name of the algorithm you want. fc or mac or fc-cbj or min_conflicts? ")
+                var_timeout.start()
                 if alg1 == "fc":
                     start = time.time()
-                    result = backtracking_search(running_test, dom_wdeg, unordered_domain_values, forward_checking_with_dom_wdeg)
+                    result = backtracking_search(running_test, dom_wdeg, unordered_domain_values, fc_with_dom_wdeg)
                     end = time.time()
                     print(result,'\n')
                     print("Assignments created:", running_test.nassigns)
@@ -77,17 +77,24 @@ if __name__ == '__main__':
                     print("Assignments created:", running_test.nassigns)
                     print("Numbers of constraints checked:",running_test.ctrs_checked)
                     print("Time passed", round(end - start, 6), "seconds")
+                elif alg1 == "fc-cbj":
+                    start = time.time()
+                    result = fc_cbj(running_test, dom_wdeg, unordered_domain_values, fc_with_dom_wdeg)
+                    end = time.time()
+                    print("Assignments created:", running_test.nassigns)
+                    print("Numbers of constraints checked:",running_test.ctrs_checked)
+                    print("Time passed", round(end - start, 6), "seconds")
                 elif alg1 == "min_conflicts":
                     start = time.time()
                     result = min_conflicts(running_test)
-                    print(result,'\n')
                     end = time.time()
+                    print(result,'\n')
                     print("Assignments created:", running_test.nassigns)
                     print("Numbers of constraints checked:",running_test.ctrs_checked)
                     print("Time passed", round(end - start, 6), "seconds")
                 else:
                     print("Name you gave is not valid.")
-        timeout_thread.cancel() 
+        var_timeout.cancel() 
         if found == False: #if name given doesn't belong to any test.
             print("Wrong input! Try again!")   
         go_on = input("\nWant to check more tests? Press y for YES or anything else for NO: ")   
