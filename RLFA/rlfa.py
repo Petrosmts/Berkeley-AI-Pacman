@@ -109,10 +109,11 @@ def AC3_with_dom_wdeg(csp, queue=None, removals=None, arc_heuristic=dom_j_up): #
         (Xi, Xj) = queue.pop()
         revised, checks = revise(csp, Xi, Xj, removals, checks)
         if revised:
-            if not csp.curr_domains[Xi]: #if there is not a value that satisfies the constraint, we increase the weight.
+            if not csp.curr_domains[Xi]: #if there is not a value that satisfies the constraint, we increase the weight in two ways.
                 key = (Xi, Xj)
                 rev_key = (Xj, Xi)
-                csp.weights_for_ctrs[key] += 1
+                csp.weights_for_ctrs[key] += 1 #first way
+                csp.weights_for_ctrs[rev_key] += 1 #second way
                 return False, checks # CSP is inconsistent
             for Xk in csp.neighbors[Xi]:
                 if Xk != Xj:
@@ -140,7 +141,7 @@ def fc_cbj(csp, select_unassigned_variable=first_unassigned_variable, order_doma
     def backjump(assignment):
         global found
         found = False
-        if len(assignment) == len(csp.variables) :
+        if len(assignment) == len(csp.variables):
             found = True
             print(assignment,"\n")
             return None
