@@ -131,16 +131,16 @@ def delete_from_conflicts(csp, var):
 
 def transfer_of_conflicts(csp, var, deepest_var):
     for con in csp.set_of_conflicts[var]:
-            if con != deepest_var and deepest_var not in csp.set_of_conflicts[con]:
+            if con != deepest_var and con not in csp.set_of_conflicts[deepest_var]:
                     csp.set_of_conflicts[deepest_var].append(con)
 
 found = False
-
-def fc_cbj(csp, select_unassigned_variable=first_unassigned_variable, order_domain_values=unordered_domain_values, inference=no_inference):  
-    #names of variables are similar to those in function backtracking search.
+def fc_cbj(csp, select_unassigned_variable=first_unassigned_variable, order_domain_values=unordered_domain_values, inference=no_inference):
+    #names of variables are similar to those in function backtracking search.  
     def backjump(assignment):
         global found
-        if len(assignment) == len(csp.variables): 
+        found = False
+        if len(assignment) == len(csp.variables) :
             found = True
             print(assignment,"\n")
             return None
@@ -155,14 +155,14 @@ def fc_cbj(csp, select_unassigned_variable=first_unassigned_variable, order_doma
                         csp.unassign(var, assignment)
                         delete_from_conflicts(csp, var)
                         csp.restore(removals)
-                        return result                 
+                        return result
                 csp.restore(removals)
         csp.unassign(var, assignment) 
         delete_from_conflicts(csp, var)
         if len(csp.set_of_conflicts[var]) > 0:
-            deepest_var = csp.set_of_conflicts[var][len(csp.set_of_conflicts[var])-1]  
+            deepest_var = csp.set_of_conflicts[var][len(csp.set_of_conflicts[var]) - 1]
             transfer_of_conflicts(csp, var, deepest_var)
-            return deepest_var
+            return deepest_var 
 
     result = backjump({})
     if found == False:

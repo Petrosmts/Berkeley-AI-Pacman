@@ -68,7 +68,7 @@ if __name__ == '__main__':
                     print(result,'\n')
                     print("Assignments created:", running_test.nassigns)
                     print("Numbers of constraints checked:",running_test.ctrs_checked)
-                    print("Time passed", round(end - start, 6), "seconds")
+                    print("Time passed", round(end - start, 6), "seconds") #time will have 6 decimal digits.
                 elif alg1 == "mac":
                     start = time.time()
                     result = backtracking_search(running_test, dom_wdeg, unordered_domain_values, mac_with_dom_wdeg)
