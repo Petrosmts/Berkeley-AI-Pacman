@@ -126,9 +126,9 @@ def mac_with_dom_wdeg(csp, var, value, assignment, removals, constraint_propagat
     return constraint_propagation(csp, {(X, var) for X in csp.neighbors[var]}, removals)
 
 def delete_from_conflicts(csp, var):
-    for item in csp.set_of_conflicts: #item is the key and csp.set_of_conflicts[item] is the list
-            if var in csp.set_of_conflicts[item]:
-                csp.set_of_conflicts[item].remove(var)
+    for con in csp.set_of_conflicts: 
+            if var in csp.set_of_conflicts[con]:
+                csp.set_of_conflicts[con].remove(var)
 
 def transfer_of_conflicts(csp, var, deepest_var):
     for con in csp.set_of_conflicts[var]:
