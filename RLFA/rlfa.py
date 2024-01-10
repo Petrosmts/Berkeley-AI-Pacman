@@ -85,7 +85,7 @@ def fc_with_dom_wdeg(csp, var, value, assignment, removals): #same with the fc a
     for B in csp.neighbors[var]:
         if B not in assignment:
             for b in csp.curr_domains[B][:]:
-                if not csp.constraints(var, value, B, b):
+                if not csp.constraints(var, value, B, b): #if a variable B causes deletion of a value for variable var, then B must be put in conflicts of var.
                     if var not in csp.set_of_conflicts[B]:
                         csp.set_of_conflicts[B].append(var)
                     csp.prune(B, b, removals)
@@ -139,29 +139,29 @@ found = False
 def fc_cbj(csp, select_unassigned_variable=first_unassigned_variable, order_domain_values=unordered_domain_values, inference=no_inference):
     #names of variables are similar to those in function backtracking search.  
     def backjump(assignment):
-        global found
+        global found #so I can print the result either None, because my code doesn't return the assignment.
         found = False
-        if len(assignment) == len(csp.variables):
+        if len(assignment) == len(csp.variables): #if the assignment has all variables in it, then we found solution!
             found = True
             print(assignment,"\n")
             return None
-        var = select_unassigned_variable(assignment, csp)
+        var = select_unassigned_variable(assignment, csp) #from line 148 to line 154, code is similar to function backtrack in backtracking_search in csp.py.
         for value in order_domain_values(var, assignment, csp):
             if 0 == csp.nconflicts(var, value, assignment):
                 csp.assign(var, value, assignment)
                 removals = csp.suppose(var, value)
                 if inference(csp, var, value, assignment, removals):
                     result = backjump(assignment)
-                    if result != var:  
+                    if result != var: #if the result isn't what we want, we continue backjumping after we unassign the variable, delete var from all set_of_conflicts and restore the removed values.
                         csp.unassign(var, assignment)
                         delete_from_conflicts(csp, var)
                         csp.restore(removals)
                         return result
                 csp.restore(removals)
-        csp.unassign(var, assignment) 
-        delete_from_conflicts(csp, var)
+        csp.unassign(var, assignment) #if all values are checked, then we unassign.
+        delete_from_conflicts(csp, var) #we delete var from all set_of_conflicts
         if len(csp.set_of_conflicts[var]) > 0:
-            deepest_var = csp.set_of_conflicts[var][len(csp.set_of_conflicts[var]) - 1]
+            deepest_var = csp.set_of_conflicts[var][len(csp.set_of_conflicts[var]) - 1] #put all variables from conflicts of var to conflicts of deepest_var so we don't lose information about conflicts.
             transfer_of_conflicts(csp, var, deepest_var)
             return deepest_var 
 
