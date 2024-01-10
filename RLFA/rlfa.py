@@ -152,7 +152,7 @@ def fc_cbj(csp, select_unassigned_variable=first_unassigned_variable, order_doma
                 removals = csp.suppose(var, value)
                 if inference(csp, var, value, assignment, removals):
                     result = backjump(assignment)
-                    if result != var: #if the result isn't what we want, we continue backjumping after we unassign the variable, delete var from all set_of_conflicts and restore the removed values.
+                    if var != result: #if the result isn't what we want, we continue backjumping after we unassign the variable, delete var from all set_of_conflicts and restore the removed values.
                         csp.unassign(var, assignment)
                         delete_from_conflicts(csp, var)
                         csp.restore(removals)
