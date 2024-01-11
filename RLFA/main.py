@@ -22,7 +22,6 @@ def grouping(): #this function matches the files depending on the name of each t
                     ctr_list.append((name, content))
                 cur_file.close()
     group_list = list() #function will return this list.
-    temp = " "
     for var,cont1 in var_list:
         sol1 = cont1
         temp = var[3:len(var)-4] #name of the test so we can match correctly the files.
