@@ -24,7 +24,7 @@ def grouping(): #this function matches the files depending on the name of each t
     group_list = list() #function will return this list.
     for var,cont1 in var_list:
         sol1 = cont1
-        temp = var[3:len(var)-4] #name of the test so we can match correctly the files.
+        temp = var[3 : len(var) - 4] #name of the test so we can match correctly the files.
         for dom,cont2 in dom_list:
             temp2 = "dom" + temp + ".txt"
             if dom == temp2: #if file dom has the same test name with file var then save the content and remove it from the dom files list.
