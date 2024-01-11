@@ -9,13 +9,13 @@ class rlfa(CSP):
         neighs_for_csp = {} #dictionary where the key is a variable and the value is a list with all neighbors.
         dict_for_ctrs = {} #so we can know the symbol(> or =) for each constraint. This list will have tuples with each constraint properly seperated with function split(Tried list first but it was slow due to O(n).
         weights_for_ctrs = {} #dictionary where the key is each constraint.
-        set_of_conflicts = {}
+        dict_of_conflicts = {}
         for index, var in enumerate(variables):
             if index > 0: #first element is the amount of variables, we don't want to check that.
                 var_domain = var.split(" ") #variable is var_dom[0], domain is var_dom[1].
                 var_for_csp.append(var_domain[0]) #put variable in list for the csp.__init__.
                 neighs_for_var = [] #list with neighbors of each variable
-                set_of_conflicts[var_domain[0]] = []
+                dict_of_conflicts[var_domain[0]] = []
                 for ind_ex, dom in enumerate(domains):
                     if ind_ex > 0: #first element is the amount of domains, we don't want to check that.
                         if dom[0] == var_domain[1][0]: #if the variable's domain is the one we are examining.
@@ -41,7 +41,7 @@ class rlfa(CSP):
                 neighs_for_csp[var_domain[0]] = neighs_for_var
                 self.dict_for_ctrs = dict_for_ctrs
                 self.weights_for_ctrs = weights_for_ctrs
-                self.set_of_conflicts = set_of_conflicts
+                self.dict_of_conflicts = dict_of_conflicts
             super().__init__(var_for_csp, dom_for_csp, neighs_for_csp, self.f) #calling the CSP class init function with super().__init__ giving the necessary arguments.
 
 
@@ -60,7 +60,6 @@ def var_weight(assignment, var, csp): #for dom_wdeg
         if neigh in assignment: #Hence, the weighted degree of a variable Xi corresponds to the sum of the weights of the constraints involving Xi and at least another uninstantiated variable(from file given in hw3-2023.pdf for dom_wdeg).
             continue
         key = (var, neigh)
-        rev_key = (neigh, var)
         total_sum += csp.weights_for_ctrs[key] #sum all weights that have (var, a neighbor of var) for key.
     return total_sum
 
@@ -86,8 +85,8 @@ def fc_with_dom_wdeg(csp, var, value, assignment, removals): #same with the fc a
         if B not in assignment:
             for b in csp.curr_domains[B][:]:
                 if not csp.constraints(var, value, B, b): #if a variable B causes deletion of a value for variable var, then B must be put in conflicts of var.
-                    if var not in csp.set_of_conflicts[B]:
-                        csp.set_of_conflicts[B].append(var)
+                    if var not in csp.dict_of_conflicts[B]:
+                        csp.dict_of_conflicts[B].append(var)
                     csp.prune(B, b, removals)
             if not csp.curr_domains[B]: #if there is not a value that satisfies the constraint, we increase the weight in two ways.
                 key = (var, B)
@@ -126,14 +125,14 @@ def mac_with_dom_wdeg(csp, var, value, assignment, removals, constraint_propagat
     return constraint_propagation(csp, {(X, var) for X in csp.neighbors[var]}, removals)
 
 def delete_from_conflicts(csp, var):
-    for con in csp.set_of_conflicts: 
-            if var in csp.set_of_conflicts[con]:
-                csp.set_of_conflicts[con].remove(var)
+    for con in csp.dict_of_conflicts: #check in all variables' conflicts.
+            if var in csp.dict_of_conflicts[con]:
+                csp.dict_of_conflicts[con].remove(var)
 
 def transfer_of_conflicts(csp, var, deepest_var):
-    for con in csp.set_of_conflicts[var]:
-            if con != deepest_var and con not in csp.set_of_conflicts[deepest_var]:
-                    csp.set_of_conflicts[deepest_var].append(con)
+    for con in csp.dict_of_conflicts[var]: #transfer conflicts of variable var to conflicts to conflicts of variable deepest_var.
+            if con != deepest_var and con not in csp.dict_of_conflicts[deepest_var]:
+                    csp.dict_of_conflicts[deepest_var].append(con)
 
 found = False
 def fc_cbj(csp, select_unassigned_variable=first_unassigned_variable, order_domain_values=unordered_domain_values, inference=no_inference):
@@ -152,16 +151,16 @@ def fc_cbj(csp, select_unassigned_variable=first_unassigned_variable, order_doma
                 removals = csp.suppose(var, value)
                 if inference(csp, var, value, assignment, removals):
                     result = backjump(assignment)
-                    if var != result: #if the result isn't what we want, we continue backjumping after we unassign the variable, delete var from all set_of_conflicts and restore the removed values.
+                    if var != result: #if the result isn't what we want, we continue backjumping after we unassign the variable, delete var from all dict_of_conflicts and restore the removed values.
                         csp.unassign(var, assignment)
                         delete_from_conflicts(csp, var)
                         csp.restore(removals)
                         return result
                 csp.restore(removals)
         csp.unassign(var, assignment) #if all values are checked, then we unassign.
-        delete_from_conflicts(csp, var) #we delete var from all set_of_conflicts
-        if len(csp.set_of_conflicts[var]) > 0:
-            deepest_var = csp.set_of_conflicts[var][len(csp.set_of_conflicts[var]) - 1] #put all variables from conflicts of var to conflicts of deepest_var so we don't lose information about conflicts.
+        delete_from_conflicts(csp, var) #we delete var from all dict_of_conflicts
+        if len(csp.dict_of_conflicts[var]) > 0:
+            deepest_var = csp.dict_of_conflicts[var][len(csp.dict_of_conflicts[var]) - 1] #put all variables from conflicts of var to conflicts of deepest_var so we don't lose information about conflicts.
             transfer_of_conflicts(csp, var, deepest_var)
             return deepest_var 
 
