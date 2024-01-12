@@ -55,7 +55,7 @@ class rlfa(CSP):
         return False
             
 def var_weight(assignment, var, csp): #for dom_wdeg
-    total_sum = 1
+    total_sum = 1 #so I will not have problem with division and zero. 
     for neigh in csp.neighbors[var]:
         if neigh in assignment: #Hence, the weighted degree of a variable Xi corresponds to the sum of the weights of the constraints involving Xi and at least another uninstantiated variable(from file given in hw3-2023.pdf for dom_wdeg).
             continue
