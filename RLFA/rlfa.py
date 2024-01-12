@@ -65,7 +65,6 @@ def var_weight(assignment, var, csp): #for dom_wdeg
 
 def dom_wdeg(assignment, csp):
     csp.support_pruning()
-    variable_returned = 0
     minimum = float('inf')
     for var in csp.variables:
         if var not in assignment: #we don't want var to have a value.
