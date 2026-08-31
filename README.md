@@ -1,1 +1,1 @@
-# ArtIn
+# Berkeley-AI-Pacman
