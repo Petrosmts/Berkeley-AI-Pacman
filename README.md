@@ -1,1 +1,2 @@
-# Berkeley-AI-Pacman
+# Berkeley AI Pacman
+
